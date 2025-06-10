@@ -1,0 +1,14 @@
+# Ignore Visual Studio system files
+.vs/
+*.user
+*.suo
+
+# Ignore build output
+bin/
+obj/
+
+# Ignore environment configs
+*.db
+*.sqlite
+.env
+*.log
