@@ -3,24 +3,25 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Vlammend_Varken.Models
 {
-    public class Order
+    public class Order : BaseEntity
     {
-        [Key]
-        public int Id { get; set; }
-
         [Required]
-        public string Status { get; set; } = string.Empty;
-
-        public int Quantity { get; set; }
-
+        public OrderStatus Status { get; set; } = OrderStatus.Received;
+        public DateTime OrderDate { get; set; } = DateTime.Now;
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Price { get; set; }
-
+        public decimal TotalAmount { get; set; } = 0.00m;
         // Foreign key to Table
         public int TableId { get; set; }
-        public Table Table { get; set; } = default!;
-
+        public Table? Table { get; set; }
         // Navigation property - list of order lines
-        public List<OrderOverview> OrderOverviews { get; set; } = new();
+        public ICollection<OrderOverview> OrderOverviews { get; set; } = new List<OrderOverview>();
+    }
+
+    public enum OrderStatus
+    {
+        Received,
+        InProgress,
+        Completed,
+        Cancelled
     }
 }

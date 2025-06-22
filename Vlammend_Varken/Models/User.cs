@@ -2,17 +2,24 @@
 
 namespace Vlammend_Varken.Models
 {
-    public class User
+    public class User : BaseEntity
     {
-        public int Id { get; set; }
-        public required string Name { get; set; }
+        public required string Email { get; set; } = string.Empty;
 
-        public required string Email { get; set; }
-
-        public required string Password { get; set; }
+        public required string PasswordHash { get; set; }
 
         public required string Phone { get; set; }
 
-        public Role Role { get; set; } 
+        public EnumRole Role { get; set; }
+    }
+
+    public enum EnumRole
+    {
+        Admin,
+        Manager,
+        Staff,
+        Chef,
+        Waiter,
+        Supplier
     }
 }

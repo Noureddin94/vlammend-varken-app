@@ -3,12 +3,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Vlammend_Varken.Models
 {
-    public class OrderOverview
+    public class OrderOverview : BaseEntity
     {
-        [Key]
-        public int Id { get; set; }
+        public int OrderId { get; set; }
+        public Order? Order { get; set; }
 
-        [Required]
+        public int MenuItemId { get; set; }
+        public MenuItem? MenuItem { get; set; }
+        
         public int Quantity { get; set; }
 
         public string? Note { get; set; }
@@ -18,9 +20,5 @@ namespace Vlammend_Varken.Models
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal PriceTotal { get; set; }
-
-        // Navigation property
-        public int DishId { get; set; }
-        public Dish Dish { get; set; } = default!;
     }
 }
