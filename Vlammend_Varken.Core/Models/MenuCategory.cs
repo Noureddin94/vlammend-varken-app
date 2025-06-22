@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace Vlammend_Varken.Models
+﻿namespace Vlammend_Varken.Models
 {
     public class MenuCategory : BaseEntity
     {

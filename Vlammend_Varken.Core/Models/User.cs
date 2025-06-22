@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace Vlammend_Varken.Models
+﻿namespace Vlammend_Varken.Models
 {
     public class User : BaseEntity
     {

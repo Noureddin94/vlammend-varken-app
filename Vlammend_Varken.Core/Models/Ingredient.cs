@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.CodeAnalysis.Classification;
 
 namespace Vlammend_Varken.Models
 {
