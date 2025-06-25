@@ -1,4 +1,4 @@
-﻿namespace Vlammend_Varken.Models
+﻿namespace Vlammend_Varken.Core.Models
 {
     public abstract class BaseEntity
     {

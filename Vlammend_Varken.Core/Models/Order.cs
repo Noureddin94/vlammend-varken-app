@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Vlammend_Varken.Core.Models;
 
-namespace Vlammend_Varken.Models
+namespace Vlammend_Varken.Core.Models
 {
     public class Order : BaseEntity
     {

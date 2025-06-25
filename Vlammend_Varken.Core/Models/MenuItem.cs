@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Vlammend_Varken.Models
+namespace Vlammend_Varken.Core.Models
 {
     public class MenuItem : BaseEntity
     {

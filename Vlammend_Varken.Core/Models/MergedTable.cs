@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Vlammend_Varken.Core.Models;
 
-namespace Vlammend_Varken.Models
+namespace Vlammend_Varken.Core.Models
 {
     public class MergedTable
     {

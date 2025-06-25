@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace Vlammend_Varken.Models
+namespace Vlammend_Varken.Core.Models
 {
     public class OrderOverview : BaseEntity
     {

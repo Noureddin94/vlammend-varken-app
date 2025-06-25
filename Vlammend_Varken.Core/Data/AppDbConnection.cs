@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Vlammend_Varken.Models;
+using Vlammend_Varken.Core.Models;
 
 namespace Vlammend_Varken.Core.Data
 {

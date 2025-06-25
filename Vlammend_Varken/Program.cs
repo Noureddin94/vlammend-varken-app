@@ -11,7 +11,6 @@ namespace Vlammend_Varken
             var builder = WebApplication.CreateBuilder(args);
 
             // Register the DbContext with dependency injection
-            // Register the DbContext with dependency injection
             builder.Services.AddDbContext<Vlammend_Varken.Core.Data.AppDbConnection>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
