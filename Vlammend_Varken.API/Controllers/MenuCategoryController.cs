@@ -21,7 +21,100 @@ namespace Vlammend_Varken.API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<MenuCategory>>> GetMenuCategories()
         {
-            return Ok(await _context.menuCategories.ToListAsync());
+            return Ok(new
+            {
+                message = "All categories retrieved successfully",
+                data = await _context.menuCategories.ToListAsync()
+            });
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<MenuCategory>> GetMenuCategory(int id)
+        {
+            var category = await _context.menuCategories.FindAsync(id);
+            if (category == null)
+            {
+                return NotFound(new { message = "Category not found" });
+            }
+            return Ok(new
+            {
+                message = "Category retrieved successfully",
+                data = category
+            });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<MenuCategory>> CreateMenuCategory(MenuCategory category)
+        {
+            if (category == null)
+            {
+                return BadRequest(new { message = "Invalid category data" });
+            }
+            _context.menuCategories.Add(category);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetMenuCategory), new { id = category.Id }, new
+            {
+                message = "Category created successfully",
+                data = category
+            });
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateMenuCategory(int id, MenuCategory category)
+        {
+            if (id != category.Id)
+            {
+                return BadRequest(new { message = "Category ID mismatch" });
+            }
+            var existingCategory = await _context.menuCategories.FindAsync(id);
+            if (existingCategory == null)
+            {
+                return NotFound(new { message = "Category not found" });
+            }
+            existingCategory.Name = category.Name;
+            existingCategory.Description = category.Description;
+            existingCategory.IsActive = category.IsActive;
+            _context.menuCategories.Update(existingCategory);
+            try
+            {
+                var result = await _context.SaveChangesAsync();
+                if (result > 0)
+                {
+                    return Ok(new { message = "Updated", data = existingCategory });
+                }
+                return BadRequest(new { message = "Nothing was updated" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Internal error", error = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteMenuCategory(int id)
+        {
+            var category = await _context.menuCategories.FindAsync(id);
+            if (category == null)
+            {
+                return NotFound(new { message = "Category not found" });
+            }
+            _context.menuCategories.Remove(category);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Category deleted successfully" });
+        }
+
+        [HttpGet("active")]
+        public async Task<ActionResult<List<MenuCategory>>> GetActiveMenuCategories()
+        {
+            var activeCategories = await _context.menuCategories
+                .Where(c => c.IsActive)
+                .ToListAsync();
+            return Ok(new
+            {
+                message = "Active categories retrieved successfully",
+                data = activeCategories
+            });
+        }
+
     }
 }

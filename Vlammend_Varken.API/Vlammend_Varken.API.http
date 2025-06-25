@@ -6,3 +6,39 @@ Accept: application/json
 ###
 GET {{rootURL}}/api/menucategory
 Accept: application/json
+
+###
+GET {{rootURL}}/api/menucategory/1
+Accept: application/json
+@pathParam id = 1
+
+###
+POST {{rootURL}}/api/menucategory
+Content-Type: application/json
+{
+  "name": "Daily Menu",
+  "description": "This is the daily category.",
+  "IsActive": true
+}
+
+###
+PUT {{rootURL}}/api/menucategory/1
+Content-Type: application/json
+{
+  "id": 1,
+  "name": "Updated Daily Menu",
+  "description": "This is the updated daily category.",
+  "isActive": true
+}
+
+###
+DELETE {{rootURL}}/api/menucategory/1
+Accept: application/json
+
+###
+GET {{rootURL}}/api/menucategory/active
+Accept: application/json
+
+###
+GET {{rootURL}}/api/menuitem
+Accept: application/json
