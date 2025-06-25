@@ -1,3 +1,5 @@
+Test Voor de rechten 
+
 # 🔥 Het Vlammend Varken - Digitale Oplossing
 
 Welkom bij het project van NBM Solutions voor Het Vlammend Varken – een duurzaam barbecue- en grillrestaurant. Dit systeem ondersteunt reserveringen, betalingen, voorraadoverzicht en meer, gericht op efficiëntie en duurzaamheid.
