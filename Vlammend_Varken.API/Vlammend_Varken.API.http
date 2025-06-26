@@ -42,3 +42,29 @@ Accept: application/json
 ###
 GET {{rootURL}}/api/menuitem
 Accept: application/json
+
+###
+GET {{rootURL}}/api/menuitem/1
+Accept: application/json
+@pathParam id = 1
+
+###
+POST {{rootURL}}/api/menuitem
+Content-Type: application/json
+{
+  "name": "New Menu Item 2",
+  "description": "This is a new menu item.",
+  "price": 9.99,
+  "menuCategoryId": 2,
+  "isActive": true,
+  "ingredients": [
+    {
+      "name": "Ingredient 1",
+      "quantity": 100
+    },
+    {
+      "name": "Ingredient 2",
+      "quantity": 50
+    }
+  ]
+}

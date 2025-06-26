@@ -21,6 +21,12 @@ namespace Vlammend_Varken
                 .AddEntityFrameworkStores<AppDbConnection>();
             builder.Services.AddRazorPages();
 
+            //builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
+            //                .AddIdentityCookies();
+
+            //builder.Services.AddAuthorizationBuilder()
+            //                .AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -43,6 +49,12 @@ namespace Vlammend_Varken
             app.UseAuthorization();
 
             app.MapRazorPages();
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            // Redirect root to customer page
+            app.MapGet("/", () => Results.Redirect("/Customer/Index"));
 
             app.Run();
         }

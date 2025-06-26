@@ -66,8 +66,28 @@ namespace Vlammend_Varken.API.Controllers
 
         // PUT api/<MenuItemController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> UpdateMenuItem(int id, MenuItem item)
         {
+            if (id != item.Id)
+            {
+                return BadRequest(new { message = "Item ID mismatch" });
+            }
+            var existingItem = await _context.menuItems.FindAsync(id);
+            if (existingItem == null)
+            {
+                return NotFound(new { message = "Menu Item Not Found" });
+            }
+            existingItem.Description = item.Description;
+            existingItem.Price = item.Price;
+            existingItem.MenuCategoryId = item.MenuCategoryId;
+            existingItem.IsActive = item.IsActive;
+            _context.menuItems.Update(existingItem);
+            await _context.SaveChangesAsync();
+            return Ok(new
+            {
+                message = "Menu Item updated successfully",
+                data = existingItem
+            });
         }
 
         // DELETE api/<MenuItemController>/5
