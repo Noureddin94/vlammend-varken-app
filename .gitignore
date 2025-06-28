@@ -7,6 +7,9 @@
 bin/
 obj/
 
+# Ignore specific project document
+Project_Setup.docx
+
 # Ignore environment configs
 *.db
 *.sqlite
