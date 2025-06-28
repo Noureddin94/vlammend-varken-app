@@ -1,8 +1,240 @@
 ﻿@page
 @model Vlammend_Varken.Pages.Admin.IndexModel
 @{
-    // Layout = "_LayoutAdmin";
-    // Layout = "_LayoutNavbar";
+    Layout = "_LayoutAdmin";
     ViewData["Title"] = "Admin Dashboard";
+    ViewData["ActivePage"] = "Dashboard";
 }
-<h1>Admin Dashboard</h1>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">Admin Dashboard</h1>
+        <div class="d-flex gap-2">
+            <button class="btn btn-primary">Generate Report</button>
+            <button class="btn btn-outline-secondary">Settings</button>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card border-primary">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Total Users</h6>
+                            <h3 class="mb-0">1,254</h3>
+                        </div>
+                        <div class="bg-primary bg-opacity-10 p-3 rounded">
+                            <i class="fas fa-users text-primary"></i>
+                        </div>
+                    </div>
+                    <p class="text-success mt-2 mb-0"><small>+12.5% from last month</small></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card border-success">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Active Orders</h6>
+                            <h3 class="mb-0">87</h3>
+                        </div>
+                        <div class="bg-success bg-opacity-10 p-3 rounded">
+                            <i class="fas fa-shopping-cart text-success"></i>
+                        </div>
+                    </div>
+                    <p class="text-danger mt-2 mb-0"><small>-2.3% from yesterday</small></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card border-warning">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Pending Tasks</h6>
+                            <h3 class="mb-0">14</h3>
+                        </div>
+                        <div class="bg-warning bg-opacity-10 p-3 rounded">
+                            <i class="fas fa-tasks text-warning"></i>
+                        </div>
+                    </div>
+                    <p class="text-success mt-2 mb-0"><small>+3 new today</small></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card border-info">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Revenue</h6>
+                            <h3 class="mb-0">€5,420</h3>
+                        </div>
+                        <div class="bg-info bg-opacity-10 p-3 rounded">
+                            <i class="fas fa-euro-sign text-info"></i>
+                        </div>
+                    </div>
+                    <p class="text-success mt-2 mb-0"><small>+24.7% from last week</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <!-- Recent Orders -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Orders</h5>
+                    <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Status</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#VK-4567</td>
+                                    <td>John Smith</td>
+                                    <td><span class="badge bg-success">Completed</span></td>
+                                    <td>€42.50</td>
+                                    <td>10 May 2023</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#VK-4566</td>
+                                    <td>Sarah Johnson</td>
+                                    <td><span class="badge bg-warning">Pending</span></td>
+                                    <td>€68.20</td>
+                                    <td>9 May 2023</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#VK-4565</td>
+                                    <td>Michael Brown</td>
+                                    <td><span class="badge bg-danger">Cancelled</span></td>
+                                    <td>€35.90</td>
+                                    <td>8 May 2023</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#VK-4564</td>
+                                    <td>Emily Davis</td>
+                                    <td><span class="badge bg-success">Completed</span></td>
+                                    <td>€56.75</td>
+                                    <td>7 May 2023</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats & Tasks -->
+        <div class="col-lg-4">
+            <!-- Recent Activity -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Recent Activity</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex mb-3">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary bg-opacity-10 p-2 rounded">
+                                <i class="fas fa-user-plus text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="mb-1">New user registered</h6>
+                            <p class="text-muted mb-0">Sarah Johnson joined the system</p>
+                            <small class="text-muted">2 hours ago</small>
+                        </div>
+                    </div>
+                    <div class="d-flex mb-3">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 p-2 rounded">
+                                <i class="fas fa-shopping-cart text-success"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="mb-1">New order placed</h6>
+                            <p class="text-muted mb-0">Order #VK-4567 for €42.50</p>
+                            <small class="text-muted">5 hours ago</small>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning bg-opacity-10 p-2 rounded">
+                                <i class="fas fa-exclamation-triangle text-warning"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="mb-1">Low stock alert</h6>
+                            <p class="text-muted mb-0">Only 3 "Vlammend Varken Special" left</p>
+                            <small class="text-muted">1 day ago</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary">
+                            <i class="fas fa-plus me-2"></i> Add New Product
+                        </button>
+                        <button class="btn btn-outline-success">
+                            <i class="fas fa-user-plus me-2"></i> Create User
+                        </button>
+                        <button class="btn btn-outline-info">
+                            <i class="fas fa-chart-line me-2"></i> View Reports
+                        </button>
+                        <button class="btn btn-outline-warning">
+                            <i class="fas fa-cog me-2"></i> System Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Simple dashboard interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // You can add dashboard-specific JS here
+            console.log('Admin dashboard loaded');
+        });
+    </script>
+}

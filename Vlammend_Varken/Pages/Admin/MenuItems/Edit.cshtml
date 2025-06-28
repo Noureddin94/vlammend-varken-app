@@ -1,0 +1,38 @@
+﻿@page
+@model Vlammend_Varken.Pages.Admin.MenuItems.EditModel
+@{
+    ViewData["Title"] = "Edit Menu Item";
+    ViewData["ActivePage"] = "MenuItems";
+    Layout = "_LayoutAdmin";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="MenuItem.Id" />
+
+            <!-- Same form fields as Create.cshtml -->
+            <div class="form-group mb-3">
+                <label asp-for="MenuItem.Name" class="control-label"></label>
+                <input asp-for="MenuItem.Name" class="form-control" />
+                <span asp-validation-for="MenuItem.Name" class="text-danger"></span>
+            </div>
+
+            <!-- Include all other fields like in Create.cshtml -->
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary me-2">
+                    <i class="fas fa-save me-2"></i>Save
+                </button>
+                <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -5,7 +5,7 @@
 namespace Vlammend_Varken.Core.Migrations
 {
     /// <inheritdoc />
-    public partial class TestConnection : Migration
+    public partial class AddCustomUserWithRoles : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

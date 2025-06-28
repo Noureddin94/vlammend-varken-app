@@ -12,8 +12,8 @@ using Vlammend_Varken.Core.Data;
 namespace Vlammend_Varken.Core.Migrations
 {
     [DbContext(typeof(AppDbConnection))]
-    [Migration("20250622073455_SeedTables")]
-    partial class SeedTables
+    [Migration("20250628155630_AddCustomUserWithRoles")]
+    partial class AddCustomUserWithRoles
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,140 @@ namespace Vlammend_Varken.Core.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Vlammend_Varken.Models.Ingredient", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("Vlammend_Varken.Core.Models.Ingredient", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -46,17 +179,18 @@ namespace Vlammend_Varken.Core.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                    b.Property<string>("Quantity")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MenuItemId");
 
-                    b.ToTable("ingredients");
+                    b.ToTable("Ingredients");
                 });
 
-            modelBuilder.Entity("Vlammend_Varken.Models.MenuCategory", b =>
+            modelBuilder.Entity("Vlammend_Varken.Core.Models.MenuCategory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -79,10 +213,10 @@ namespace Vlammend_Varken.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("menuCategories");
+                    b.ToTable("MenuCategories");
                 });
 
-            modelBuilder.Entity("Vlammend_Varken.Models.MenuItem", b =>
+            modelBuilder.Entity("Vlammend_Varken.Core.Models.MenuItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -113,10 +247,10 @@ namespace Vlammend_Varken.Core.Migrations
 
                     b.HasIndex("MenuCategoryId");
 
-                    b.ToTable("menuItems");
+                    b.ToTable("MenuItems");
                 });
 
-            modelBuilder.Entity("Vlammend_Varken.Models.MergedTable", b =>
+            modelBuilder.Entity("Vlammend_Varken.Core.Models.MergedTable", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -143,20 +277,16 @@ namespace Vlammend_Varken.Core.Migrations
 
                     b.HasIndex("MergedTableId");
 
-                    b.ToTable("mergedTables");
+                    b.ToTable("MergedTables");
                 });
 
-            modelBuilder.Entity("Vlammend_Varken.Models.Order", b =>
+            modelBuilder.Entity("Vlammend_Varken.Core.Models.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
@@ -174,10 +304,10 @@ namespace Vlammend_Varken.Core.Migrations
 
                     b.HasIndex("TableId");
 
-                    b.ToTable("orders");
+                    b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("Vlammend_Varken.Models.OrderOverview", b =>
+            modelBuilder.Entity("Vlammend_Varken.Core.Models.OrderOverview", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -187,10 +317,6 @@ namespace Vlammend_Varken.Core.Migrations
 
                     b.Property<int>("MenuItemId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
@@ -213,10 +339,10 @@ namespace Vlammend_Varken.Core.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("orderOverviews");
+                    b.ToTable("OrderOverviews");
                 });
 
-            modelBuilder.Entity("Vlammend_Varken.Models.Table", b =>
+            modelBuilder.Entity("Vlammend_Varken.Core.Models.Table", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -235,7 +361,7 @@ namespace Vlammend_Varken.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tables");
+                    b.ToTable("Tables");
 
                     b.HasData(
                         new
@@ -765,7 +891,7 @@ namespace Vlammend_Varken.Core.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Vlammend_Varken.Models.User", b =>
+            modelBuilder.Entity("Vlammend_Varken.Core.Models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -773,33 +899,123 @@ namespace Vlammend_Varken.Core.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Email")
-                        .IsRequired()
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Phone")
-                        .IsRequired()
+                    b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
 
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("users");
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Vlammend_Varken.Models.Ingredient", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
-                    b.HasOne("Vlammend_Varken.Models.MenuItem", "MenuItem")
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+                {
+                    b.HasOne("Vlammend_Varken.Core.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
+                {
+                    b.HasOne("Vlammend_Varken.Core.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Vlammend_Varken.Core.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
+                {
+                    b.HasOne("Vlammend_Varken.Core.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Vlammend_Varken.Core.Models.Ingredient", b =>
+                {
+                    b.HasOne("Vlammend_Varken.Core.Models.MenuItem", "MenuItem")
                         .WithMany("ingredients")
                         .HasForeignKey("MenuItemId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -808,9 +1024,9 @@ namespace Vlammend_Varken.Core.Migrations
                     b.Navigation("MenuItem");
                 });
 
-            modelBuilder.Entity("Vlammend_Varken.Models.MenuItem", b =>
+            modelBuilder.Entity("Vlammend_Varken.Core.Models.MenuItem", b =>
                 {
-                    b.HasOne("Vlammend_Varken.Models.MenuCategory", "MenuCategory")
+                    b.HasOne("Vlammend_Varken.Core.Models.MenuCategory", "MenuCategory")
                         .WithMany("MenuItems")
                         .HasForeignKey("MenuCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -819,15 +1035,15 @@ namespace Vlammend_Varken.Core.Migrations
                     b.Navigation("MenuCategory");
                 });
 
-            modelBuilder.Entity("Vlammend_Varken.Models.MergedTable", b =>
+            modelBuilder.Entity("Vlammend_Varken.Core.Models.MergedTable", b =>
                 {
-                    b.HasOne("Vlammend_Varken.Models.Table", "MainTable")
+                    b.HasOne("Vlammend_Varken.Core.Models.Table", "MainTable")
                         .WithMany()
                         .HasForeignKey("MainTableId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Vlammend_Varken.Models.Table", "MergedTableReference")
+                    b.HasOne("Vlammend_Varken.Core.Models.Table", "MergedTableReference")
                         .WithMany()
                         .HasForeignKey("MergedTableId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -838,9 +1054,9 @@ namespace Vlammend_Varken.Core.Migrations
                     b.Navigation("MergedTableReference");
                 });
 
-            modelBuilder.Entity("Vlammend_Varken.Models.Order", b =>
+            modelBuilder.Entity("Vlammend_Varken.Core.Models.Order", b =>
                 {
-                    b.HasOne("Vlammend_Varken.Models.Table", "Table")
+                    b.HasOne("Vlammend_Varken.Core.Models.Table", "Table")
                         .WithMany("Orders")
                         .HasForeignKey("TableId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -849,15 +1065,15 @@ namespace Vlammend_Varken.Core.Migrations
                     b.Navigation("Table");
                 });
 
-            modelBuilder.Entity("Vlammend_Varken.Models.OrderOverview", b =>
+            modelBuilder.Entity("Vlammend_Varken.Core.Models.OrderOverview", b =>
                 {
-                    b.HasOne("Vlammend_Varken.Models.MenuItem", "MenuItem")
+                    b.HasOne("Vlammend_Varken.Core.Models.MenuItem", "MenuItem")
                         .WithMany()
                         .HasForeignKey("MenuItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Vlammend_Varken.Models.Order", "Order")
+                    b.HasOne("Vlammend_Varken.Core.Models.Order", "Order")
                         .WithMany("OrderOverviews")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -868,22 +1084,22 @@ namespace Vlammend_Varken.Core.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("Vlammend_Varken.Models.MenuCategory", b =>
+            modelBuilder.Entity("Vlammend_Varken.Core.Models.MenuCategory", b =>
                 {
                     b.Navigation("MenuItems");
                 });
 
-            modelBuilder.Entity("Vlammend_Varken.Models.MenuItem", b =>
+            modelBuilder.Entity("Vlammend_Varken.Core.Models.MenuItem", b =>
                 {
                     b.Navigation("ingredients");
                 });
 
-            modelBuilder.Entity("Vlammend_Varken.Models.Order", b =>
+            modelBuilder.Entity("Vlammend_Varken.Core.Models.Order", b =>
                 {
                     b.Navigation("OrderOverviews");
                 });
 
-            modelBuilder.Entity("Vlammend_Varken.Models.Table", b =>
+            modelBuilder.Entity("Vlammend_Varken.Core.Models.Table", b =>
                 {
                     b.Navigation("Orders");
                 });

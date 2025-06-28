@@ -26,7 +26,7 @@ namespace Vlammend_Varken.API.Controllers
             return Ok(new
             {
                 message = "All Menu Items retrieved successfully",
-                data = await _context.menuItems.ToListAsync()
+                data = await _context.MenuItems.ToListAsync()
             });
         }
 
@@ -34,7 +34,7 @@ namespace Vlammend_Varken.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<MenuItem>> GetMenuItem(int id)
         {
-            var item = await _context.menuItems.FindAsync(id);
+            var item = await _context.MenuItems.FindAsync(id);
             if (item == null)
             {
                 return NotFound(new { message = "Menu Item Not Found" });
@@ -55,7 +55,7 @@ namespace Vlammend_Varken.API.Controllers
             {
                 return BadRequest(new { message = "Invalid item data" });
             }
-            _context.menuItems.Add(item);
+            _context.MenuItems.Add(item);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetMenuItem), new { id = item.Id }, new
             {
@@ -72,7 +72,7 @@ namespace Vlammend_Varken.API.Controllers
             {
                 return BadRequest(new { message = "Item ID mismatch" });
             }
-            var existingItem = await _context.menuItems.FindAsync(id);
+            var existingItem = await _context.MenuItems.FindAsync(id);
             if (existingItem == null)
             {
                 return NotFound(new { message = "Menu Item Not Found" });
@@ -81,7 +81,7 @@ namespace Vlammend_Varken.API.Controllers
             existingItem.Price = item.Price;
             existingItem.MenuCategoryId = item.MenuCategoryId;
             existingItem.IsActive = item.IsActive;
-            _context.menuItems.Update(existingItem);
+            _context.MenuItems.Update(existingItem);
             await _context.SaveChangesAsync();
             return Ok(new
             {
@@ -92,8 +92,22 @@ namespace Vlammend_Varken.API.Controllers
 
         // DELETE api/<MenuItemController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            var item = await _context.MenuItems.FindAsync(id);
+            if (item != null)
+            {
+                _context.MenuItems.Remove(item);
+                _context.SaveChanges();
+            }
+            else
+            {
+                throw new KeyNotFoundException("Menu Item not found");
+            }
+            return Ok(new
+            {
+                message = "Menu Item deleted successfully"
+            });
         }
     }
 }

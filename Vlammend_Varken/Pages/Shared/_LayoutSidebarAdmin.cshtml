@@ -1,0 +1,57 @@
+﻿@if (User.Identity?.IsAuthenticated == true)
+{
+    <div class="sidebar col-md-3 col-lg-2 d-md-inline bg-dark sidebar collapse" id="sidebarMenu" style="min-height: 97vh;">
+        <div class="position-sticky pt-3">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Dashboard" ? "active" : "") text-white" href="/Admin">
+                        <i class="fas fa-tachometer-alt me-2"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(ViewData["ActivePage"]?.ToString() == "MenuItems" ? "active" : "") text-white" href="/Admin/MenuItems">
+                        <i class="fas fa-utensils me-2"></i>
+                        Menu Items
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Categories" ? "active" : "") text-white" href="/Admin/Categories">
+                        <i class="fas fa-list me-2"></i>
+                        Categories
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/Admin/Orders">
+                        <i class="fas fa-receipt me-2"></i>
+                        Orders
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/Admin/Users">
+                        <i class="fas fa-users me-2"></i>
+                        Users
+                    </a>
+                </li>
+            </ul>
+
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                <span>Reports</span>
+            </h6>
+            <ul class="nav flex-column mb-2">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/Admin/Reports/Sales">
+                        <i class="fas fa-chart-line me-2"></i>
+                        Sales
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/Admin/Reports/Inventory">
+                        <i class="fas fa-boxes me-2"></i>
+                        Inventory
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+}

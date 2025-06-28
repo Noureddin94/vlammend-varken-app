@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,22 +10,20 @@ using Vlammend_Varken.Core.Models;
 
 namespace Vlammend_Varken.Core.Data
 {
-    public class AppDbConnection : DbContext
+    public class AppDbConnection : IdentityDbContext<User, IdentityRole<int>, int>
     {
         public AppDbConnection(DbContextOptions<AppDbConnection> options) : base(options)
         {
         }
 
         // Define your DbSets for the entities here
-        public DbSet<MenuCategory> menuCategories { get; set; }
-        public DbSet<MenuItem> menuItems { get; set; }
-        public DbSet<Ingredient> ingredients { get; set; }
-        public DbSet<Order> orders { get; set; }
-        public DbSet<OrderOverview> orderOverviews  { get; set; }
-        public DbSet<Table> tables { get; set; }
-        public DbSet<MergedTable> mergedTables { get; set; }
-        public DbSet<User> users { get; set; }
-
+        public DbSet<MenuCategory> MenuCategories { get; set; }
+        public DbSet<MenuItem> MenuItems { get; set; }
+        public DbSet<Ingredient> Ingredients { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderOverview> OrderOverviews  { get; set; }
+        public DbSet<Table> Tables { get; set; }
+        public DbSet<MergedTable> MergedTables { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

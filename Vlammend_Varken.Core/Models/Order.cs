@@ -4,8 +4,9 @@ using Vlammend_Varken.Core.Models;
 
 namespace Vlammend_Varken.Core.Models
 {
-    public class Order : BaseEntity
+    public class Order
     {
+        public int Id { get; set; }
         [Required]
         public OrderStatus Status { get; set; } = OrderStatus.Received;
         public DateTime OrderDate { get; set; } = DateTime.Now;

@@ -24,14 +24,14 @@ namespace Vlammend_Varken.API.Controllers
             return Ok(new
             {
                 message = "All categories retrieved successfully",
-                data = await _context.menuCategories.ToListAsync()
+                data = await _context.MenuCategories.ToListAsync()
             });
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<MenuCategory>> GetMenuCategory(int id)
         {
-            var category = await _context.menuCategories.FindAsync(id);
+            var category = await _context.MenuCategories.FindAsync(id);
             if (category == null)
             {
                 return NotFound(new { message = "Category not found" });
@@ -50,7 +50,7 @@ namespace Vlammend_Varken.API.Controllers
             {
                 return BadRequest(new { message = "Invalid category data" });
             }
-            _context.menuCategories.Add(category);
+            _context.MenuCategories.Add(category);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetMenuCategory), new { id = category.Id }, new
             {
@@ -66,7 +66,7 @@ namespace Vlammend_Varken.API.Controllers
             {
                 return BadRequest(new { message = "Category ID mismatch" });
             }
-            var existingCategory = await _context.menuCategories.FindAsync(id);
+            var existingCategory = await _context.MenuCategories.FindAsync(id);
             if (existingCategory == null)
             {
                 return NotFound(new { message = "Category not found" });
@@ -74,7 +74,7 @@ namespace Vlammend_Varken.API.Controllers
             existingCategory.Name = category.Name;
             existingCategory.Description = category.Description;
             existingCategory.IsActive = category.IsActive;
-            _context.menuCategories.Update(existingCategory);
+            _context.MenuCategories.Update(existingCategory);
             try
             {
                 var result = await _context.SaveChangesAsync();
@@ -93,12 +93,12 @@ namespace Vlammend_Varken.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMenuCategory(int id)
         {
-            var category = await _context.menuCategories.FindAsync(id);
+            var category = await _context.MenuCategories.FindAsync(id);
             if (category == null)
             {
                 return NotFound(new { message = "Category not found" });
             }
-            _context.menuCategories.Remove(category);
+            _context.MenuCategories.Remove(category);
             await _context.SaveChangesAsync();
             return Ok(new { message = "Category deleted successfully" });
         }
@@ -106,7 +106,7 @@ namespace Vlammend_Varken.API.Controllers
         [HttpGet("active")]
         public async Task<ActionResult<List<MenuCategory>>> GetActiveMenuCategories()
         {
-            var activeCategories = await _context.menuCategories
+            var activeCategories = await _context.MenuCategories
                 .Where(c => c.IsActive)
                 .ToListAsync();
             return Ok(new

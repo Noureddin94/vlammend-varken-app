@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Vlammend_Varken.Core.Data;
+using Vlammend_Varken.Core.Models;
 
 namespace Vlammend_Varken
 {
@@ -14,18 +15,35 @@ namespace Vlammend_Varken
             builder.Services.AddDbContext<Vlammend_Varken.Core.Data.AppDbConnection>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            // Add services to the container.
+            //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<AppDbConnection>();
 
+            // Add services to the container.
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<AppDbConnection>();
+
+            // Add Identity services for user management
+            builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
+            {
+                // Configure Identity options
+                options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = true;
+                options.Password.RequiredLength = 6;
+            })
+            .AddEntityFrameworkStores<AppDbConnection>()
+            .AddDefaultTokenProviders()
+            .AddDefaultUI();
+
             builder.Services.AddRazorPages();
 
-            //builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
-            //                .AddIdentityCookies();
-
-            //builder.Services.AddAuthorizationBuilder()
-            //                .AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+            // Add authorization policies
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+                options.AddPolicy("ChefOnly", policy => policy.RequireRole("Chef"));
+                options.AddPolicy("WaiterOnly", policy => policy.RequireRole("Waiter"));
+            });
 
             var app = builder.Build();
 
@@ -45,7 +63,7 @@ namespace Vlammend_Varken
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapRazorPages();

@@ -1,0 +1,73 @@
+﻿/* Admin Stylling*/
+/* General body styling */
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #f8f9fa;
+    color: #212529;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    min-height: 300px;
+}
+
+
+/* Admin sidebar styling */
+.sidebar {
+    position: fixed;
+    top: 24px;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    padding: 48px 0 0;
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+    height: 100%;
+}
+
+    .sidebar .nav-link {
+        font-weight: 500;
+        color: #adb5bd;
+        padding: 0.75rem 1rem;
+        border-left: 4px solid transparent;
+    }
+
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .sidebar .nav-link.active {
+            color: #fff;
+            background-color: rgba(255,255,255,0.1);
+            border-left: 4px solid #0d6efd;
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 4px;
+            color: #6c757d;
+        }
+
+        .sidebar .nav-link.active i,
+        .sidebar .nav-link:hover i {
+            color: inherit;
+        }
+
+/* Main content area */
+.main {
+    padding-top: 1.5rem;
+    margin-left: 280px; /* Should match sidebar width */
+}
+
+/* Adjust for mobile */
+@media (max-width: 767.98px) {
+    .sidebar {
+        margin-left: -280px;
+    }
+
+    .main {
+        margin-left: 0;
+    }
+
+    .sidebar.show {
+        margin-left: 0;
+    }
+}
