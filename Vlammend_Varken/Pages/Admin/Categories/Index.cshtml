@@ -19,6 +19,7 @@
             <tr>
                 <th>Name</th>
                 <th>Image</th>
+                <th>Status</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -30,9 +31,13 @@
                     <td>
                         @if (!string.IsNullOrEmpty(item.Image))
                         {
-                            <img src="@item.Image" alt="@item.Name" style="height:60px; width:auto;" />
+                            <img src="@item.Image" alt="@item.Name" style="height:100px; width:100px;" />
                         }
                     </td>
+                    <td>
+                        <span class="badge @(item.IsActive ? "bg-success" : "bg-secondary")">
+                            @(item.IsActive ? "Active" : "Inactive")
+                        </span>
                     <td>
                         <div class="btn-group" role="group">
                             <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">

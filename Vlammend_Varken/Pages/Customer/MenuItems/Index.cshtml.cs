@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Vlammend_Varken.Pages.Customer
+namespace Vlammend_Varken.Pages.Customer.MenuItems
 {
-    public class MenuModel : PageModel
+    public class IndexModel : PageModel
     {
         public void OnGet()
         {
