@@ -32,4 +32,8 @@
     <ProjectReference Include="..\Vlammend_Varken.Core\Vlammend_Varken.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\uploads\" />
+  </ItemGroup>
+
 </Project>

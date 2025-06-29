@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Vlammend_Varken.Core.Data;
@@ -5,6 +6,7 @@ using Vlammend_Varken.Core.Models;
 
 namespace Vlammend_Varken.Pages.Admin.MenuItems
 {
+    [Authorize(Roles = "Admin, Chef")]
     public class CreateModel : PageModel
     {
         private readonly AppDbConnection _context;

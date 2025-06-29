@@ -116,7 +116,7 @@ namespace Vlammend_Varken.Areas.Identity.Pages.Account
             returnUrl ??= Url.Content("~/Admin");
             if (ModelState.IsValid)
             {
-                var user = new User { UserName = Input.Email, Email = Input.Email };
+                var user = new User { UserName = Input.Email, Email = Input.Email, Role = EnumRole.Waiter, IsApproved = false };
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)

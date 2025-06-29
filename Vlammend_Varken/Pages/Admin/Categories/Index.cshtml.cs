@@ -1,12 +1,27 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using Vlammend_Varken.Core.Data;
+using Vlammend_Varken.Core.Models;
 
 namespace Vlammend_Varken.Pages.Admin.Categories
 {
     public class IndexModel : PageModel
     {
-        public void OnGet()
+        private readonly AppDbConnection _context;
+
+        public IndexModel(AppDbConnection context)
         {
+            _context = context;
+        }
+
+        public IList<MenuCategory> MenuCategories{ get; set; } = default!;
+
+        public async Task OnGetAsync()
+        {
+            MenuCategories = await _context.MenuCategories
+                .OrderBy(c => c.Name)
+                .ToListAsync();
         }
     }
 }

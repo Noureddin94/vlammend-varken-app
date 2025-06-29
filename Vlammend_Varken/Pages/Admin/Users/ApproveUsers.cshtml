@@ -1,0 +1,55 @@
+﻿@page
+@model Vlammend_Varken.Pages.Admin.Users.ApproveUsersModel
+@{
+    ViewData["Title"] = "Approve Users";
+    ViewData["ActivePage"] = "Users";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h3>Pending User Approvals</h3>
+    </div>
+    <div class="card-body">
+        @if (Model.PendingUsers.Any())
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Registered</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.PendingUsers)
+                    {
+                        <tr>
+                            <td>@user.Email</td>
+                            <td>@user.Role</td>
+                            <td>
+                                <form method="post" class="d-inline">
+                                    <button type="submit" asp-page-handler="Approve"
+                                            asp-route-userId="@user.Id"
+                                            class="btn btn-success btn-sm">
+                                        Approve
+                                    </button>
+                                </form>
+                                <form method="post" class="d-inline ms-2">
+                                    <button type="submit" asp-page-handler="Reject"
+                                            asp-route-userId="@user.Id"
+                                            class="btn btn-danger btn-sm">
+                                        Reject
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="alert alert-info">No pending approvals</div>
+        }
+    </div>
+</div>
