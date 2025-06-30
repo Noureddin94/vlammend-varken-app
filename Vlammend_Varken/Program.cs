@@ -44,6 +44,7 @@ namespace Vlammend_Varken
                 options.AddPolicy("ChefOnly", policy => policy.RequireRole("Chef"));
                 options.AddPolicy("WaiterOnly", policy => policy.RequireRole("Waiter"));
             });
+            builder.Services.AddHttpClient();
 
             var app = builder.Build();
 

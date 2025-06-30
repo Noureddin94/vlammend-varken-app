@@ -1,34 +1,35 @@
 ﻿@page
-@model Vlammend_Varken.Pages.Customer.IndexModel
+@model Vlammend_Varken.Pages.Customer.Categories.ShowModel
 @{
     Layout = "_layoutCustomer";
     // Layout = "_LayoutNavbar";
-    ViewData["Title"] = "Categories";
+    ViewData["Title"] = "Customer";
 }
-<h2>Categorieën</h2>
-<h3>Kies hier uw menu</h3>
+<h2>Welcome to Vlammend Varken page customer</h2>
 
-<div class="row">
-    <div class="col-auto">
-        <div class="card" style="width: 18rem;">
-            <img src="@Url.Content("~/Images/Dagmenu.jpg")" class="card-img-top" alt="Categorieafbeelding">
-            <div class="card-body">
-                <h5 class="card-title">Dagmenu</h5>
-                <p class="card-text">Het dagmenu bestaat uit dagverse duurzame gerechten samengesteld door onze Chef.</p>
-                <a asp-page="/Customer/DayMenu" class="btn btn-primary">Dagmenu</a>
 
-            </div>
+<div class="container">
+    <h1>Menu Categories</h1>
+
+    @if (Model.Categories.Any())
+    {
+        <div class="row">
+            @foreach (var category in Model.Categories)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">@category.Name</h5>
+                            <img src="@category.Image" alt="@category.Name" class="img-fluid mb-3" />
+                            <!-- Add more category details as needed -->
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
-    </div>
-
-    <div class="col-auto">
-        <div class="card" style="width: 18rem;">
-            <img src="@Url.Content("~/Images/Menu.jpg")" class="card-img-top" alt="Categorieafbeelding">
-            <div class="card-body">
-                <h5 class="card-title">Menu</h5>
-                <p class="card-text">Ons menu.</p>
-                <a href="#" class="btn btn-primary">Menu</a>
-            </div>
-        </div>
-    </div>
+    }
+    else
+    {
+        <div class="alert alert-info">No categories available</div>
+    }
 </div>

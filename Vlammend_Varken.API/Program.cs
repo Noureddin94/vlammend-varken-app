@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Vlammend_Varken.Core.Data;
+using Vlammend_Varken.Core.Models;
 
 namespace Vlammend_Varken.API
 {
@@ -16,7 +17,7 @@ namespace Vlammend_Varken.API
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Register Identity services
-            builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+            builder.Services.AddIdentity<User, IdentityRole<int>>()
                             .AddEntityFrameworkStores<AppDbConnection>()
                             .AddDefaultTokenProviders();
 
