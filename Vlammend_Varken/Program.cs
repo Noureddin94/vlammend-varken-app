@@ -37,6 +37,9 @@ namespace Vlammend_Varken
 
             builder.Services.AddRazorPages();
 
+            // Add MVC controllers
+            builder.Services.AddHttpClient();
+
             // Add authorization policies
             builder.Services.AddAuthorization(options =>
             {

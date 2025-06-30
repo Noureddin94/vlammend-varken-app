@@ -8,18 +8,56 @@
 
 <div class="row">
     <div class="col-md-6">
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="MenuItem.Id" />
 
-            <!-- Same form fields as Create.cshtml -->
             <div class="form-group mb-3">
                 <label asp-for="MenuItem.Name" class="control-label"></label>
                 <input asp-for="MenuItem.Name" class="form-control" />
                 <span asp-validation-for="MenuItem.Name" class="text-danger"></span>
             </div>
 
-            <!-- Include all other fields like in Create.cshtml -->
+            <div class="form-group mb-3">
+                <label asp-for="MenuItem.Description" class="control-label"></label>
+                <textarea asp-for="MenuItem.Description" class="form-control"></textarea>
+                <span asp-validation-for="MenuItem.Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-select mb-3">
+                <label asp-for="MenuItem.MenuCategoryId" class="control-label">Menu Category</label>
+                <select asp-for="MenuItem.MenuCategoryId" class="form-control"
+                        asp-items="@(new SelectList(ViewData["Categories"] as IEnumerable<Vlammend_Varken.Core.Models.MenuCategory>, "Id", "Name"))">
+                    <option value="">-- Select Category --</option>
+                </select>
+                <span asp-validation-for="MenuItem.MenuCategoryId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="control-label">Current Image</label>
+                @if (!string.IsNullOrEmpty(Model.ExistingImagePath))
+                {
+                    <div class="mb-2">
+                        <img id="previewImage" src="@Model.ExistingImagePath" class="img-thumbnail" style="max-height: 200px;" />
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">No image uploaded</p>
+                }
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="ImageFile" class="control-label">Update Image</label>
+                <input type="file" asp-for="ImageFile" class="form-control" accept=".jpg,.jpeg,.png,.gif" id="imageFileInput" />
+                <span asp-validation-for="ImageFile" class="text-danger"></span>
+                <small class="text-muted">Leave empty to keep current image</small>
+            </div>
+
+            <div class="form-group form-check mb-3">
+                <input type="checkbox" asp-for="MenuItem.IsActive" class="form-check-input" />
+                <label asp-for="MenuItem.IsActive" class="form-check-label">Active</label>
+            </div>
 
             <div class="form-group">
                 <button type="submit" class="btn btn-primary me-2">
@@ -35,4 +73,13 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        document.getElementById('imageFileInput').addEventListener('change', function(event) {
+            const [file] = this.files;
+            if (file) {
+                const preview = document.getElementById('previewImage');
+                preview.src = URL.createObjectURL(file);
+            }
+        });
+    </script>
 }

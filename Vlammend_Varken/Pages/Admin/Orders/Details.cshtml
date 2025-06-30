@@ -1,4 +1,41 @@
 ﻿@page
 @model Vlammend_Varken.Pages.Admin.Orders.DetailsModel
 @{
+    ViewData["Title"] = "Order Details";
+    ViewData["ActivePage"] = "Orders";
+    Layout = "_LayoutAdmin";
 }
+
+<h3>Order Details</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Price Each</th>
+            <th>Total</th>
+            <th>Note</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Order?.OrderOverviews != null)
+        {
+            foreach (var item in Model.Order.OrderOverviews)
+            {
+                <tr>
+                    <td>@item.MenuItem?.Name</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.PriceEach.ToString("C")</td>
+                    <td>@item.PriceTotal.ToString("C")</td>
+                    <td>@item.Note</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-muted">No order items found.</td>
+            </tr>
+        }
+    </tbody>
+</table>

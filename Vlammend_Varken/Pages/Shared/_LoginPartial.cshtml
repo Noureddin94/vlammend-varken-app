@@ -18,7 +18,7 @@
         }
     </ul>
 
-    <ul class="navbar-nav me-4" style="position: relative;">
+    <ul class="navbar-nav flex-row me-4" style="position: relative;">
         @if (currentUser != null)
         {
             <li class="nav-item dropdown" style="position: static;">
@@ -45,7 +45,7 @@
         }
         else
         {
-            <li class="nav-item">
+            <li class="nav-item me-4">
                 <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
             </li>
             <li class="nav-item">

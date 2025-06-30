@@ -1,0 +1,179 @@
+﻿@page
+@using Vlammend_Varken.Core.Models
+@model Vlammend_Varken.Pages.Admin.Orders.CreateModel
+@{
+    ViewData["Title"] = "Create Order";
+    ViewData["ActivePage"] = "Orders";
+    Layout = "_LayoutAdmin";
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Create New Order</h1>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Order Details</h6>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Order.TableId" class="control-label">Table</label>
+                            <select asp-for="Order.TableId" class="form-control" required>
+                                <option value="">Select Table</option>
+                                @foreach (var table in Model.AvailableTables)
+                                {
+                                    <option value="@table.Id">Table @table.TableNumber</option>
+                                }
+                            </select>
+                            <span asp-validation-for="Order.TableId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Order.Status" class="control-label">Status</label>
+                            <select asp-for="Order.Status" class="form-control">
+                                @foreach (var status in Enum.GetValues(typeof(OrderStatus)))
+                                {
+                                    <option value="@status">@status</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Order Items</label>
+                    <div id="orderItemsContainer">
+                        @for (var i = 0; i < Model.OrderItems.Count; i++)
+                        {
+                            <div class="row mb-2 order-item-row">
+                                <div class="col-md-5">
+                                    <select asp-for="OrderItems[i].MenuItemId" class="form-control menu-item-select" required
+                                            onchange="updatePrice(this)">
+                                        <option value="">Select Menu Item</option>
+                                        @foreach (var item in Model.MenuItems)
+                                        {
+                                            <option value="@item.Id" data-price="@item.Price">@item.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <input asp-for="OrderItems[i].Quantity" class="form-control quantity" min="1" value="1" required
+                                           onchange="calculateTotal(this)" />
+                                </div>
+                                <div class="col-md-3">
+                                    <input asp-for="OrderItems[i].Note" class="form-control" placeholder="Special instructions" />
+                                </div>
+                                <div class="col-md-1">
+                                    <input asp-for="OrderItems[i].Price" class="form-control price" readonly />
+                                </div>
+                                <div class="col-md-1">
+                                    <button type="button" class="btn btn-danger remove-item" onclick="removeItem(this)">
+                                        <i class="fas fa-times">Remove</i>
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <button type="button" id="addOrderItem" class="btn btn-secondary mt-2">
+                        <i class="fas fa-plus"></i> Add Item
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Total Amount: </label>
+                    <span id="totalAmount">@Model.Order.TotalAmount.ToString("C")</span>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Create Order" class="btn btn-primary" />
+                    <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize prices for existing items
+            $('.menu-item-select').each(function() {
+                if ($(this).val()) {
+                    updatePrice(this);
+                }
+            });
+
+            // Add new order item
+            $('#addOrderItem').click(function() {
+                const index = $('.order-item-row').length;
+                const newRow = $(`
+                    <div class="row mb-2 order-item-row">
+                        <div class="col-md-5">
+                            <select name="OrderItems[${index}].MenuItemId" class="form-control menu-item-select" required
+                                onchange="updatePrice(this)">
+                                <option value="">Select Menu Item</option>
+                                @foreach (var item in Model.MenuItems)
+                                {
+                                        <option value="@item.Id" data-price="@item.Price">@item.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <input name="OrderItems[${index}].Quantity" class="form-control quantity" min="1" value="1" required
+                                onchange="calculateTotal(this)"/>
+                        </div>
+                        <div class="col-md-3">
+                            <input name="OrderItems[${index}].Note" class="form-control" placeholder="Special instructions"/>
+                        </div>
+                        <div class="col-md-1">
+                            <input name="OrderItems[${index}].Price" class="form-control price" readonly/>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-danger remove-item" onclick="removeItem(this)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                `);
+                $('#orderItemsContainer').append(newRow);
+            });
+        });
+
+        function updatePrice(selectElement) {
+            const row = $(selectElement).closest('.order-item-row');
+            const price = parseFloat($(selectElement).find('option:selected').data('price')) || 0;
+            row.find('.price').val(price.toFixed(2)).trigger('change');
+            calculateTotal(selectElement);
+        }
+
+        function calculateTotal(inputElement) {
+            const row = $(inputElement).closest('.order-item-row');
+            const quantity = parseFloat(row.find('.quantity').val()) || 0;
+            const price = parseFloat(row.find('.price').val()) || 0;
+
+            // Recalculate the total amount
+            let total = 0;
+            $('.order-item-row').each(function() {
+                const qty = parseFloat($(this).find('.quantity').val()) || 0;
+                const prc = parseFloat($(this).find('.price').val()) || 0;
+                total += qty * prc;
+            });
+
+            $('#totalAmount').text('$' + total.toFixed(2));
+        }
+
+        function removeItem(button) {
+            if ($('.order-item-row').length > 1) {
+                $(button).closest('.order-item-row').remove();
+                calculateTotal(button);
+            } else {
+                alert('At least one order item is required.');
+            }
+        }
+    </script>
+}
