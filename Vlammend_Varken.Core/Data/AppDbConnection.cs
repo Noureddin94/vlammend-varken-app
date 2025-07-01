@@ -21,7 +21,7 @@ namespace Vlammend_Varken.Core.Data
         public DbSet<MenuItem> MenuItems { get; set; }
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderOverview> OrderOverviews  { get; set; }
+        public DbSet<OrderOverview> OrderOverviews { get; set; }
         public DbSet<Table> Tables { get; set; }
         public DbSet<MergedTable> MergedTables { get; set; }
 

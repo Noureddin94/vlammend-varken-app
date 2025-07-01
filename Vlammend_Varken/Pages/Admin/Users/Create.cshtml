@@ -1,4 +1,35 @@
 ﻿@page
 @model Vlammend_Varken.Pages.Admin.Users.CreateModel
 @{
+    ViewData["Title"] = "Create User";
+    ViewData["ActivePage"] = "Users";
+    Layout = "_LayoutAdmin";
 }
+
+<div class="card">
+    <div class="card-header">
+        <h3>Create New User</h3>
+    </div>
+    <div class="card-body">
+        <form method="post" asp-page-handler="CreateUser">
+            <div class="mb-3">
+                <label asp-for="NewUser.Email" class="form-label"></label>
+                <input asp-for="NewUser.Email" class="form-control" required />
+                <span asp-validation-for="NewUser.Email" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="NewUser.Role" class="form-label"></label>
+                <select asp-for="NewUser.Role" class="form-select" required>
+                    <option value="">Select Role</option>
+                    @foreach (var role in Model.AvailableRoles)
+                    {
+                        <option value="@role">@role</option>
+                    }
+                </select>
+                <span asp-validation-for="NewUser.Role" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Create User</button>
+        </form>
+        <a asp-page="./Index" class="btn btn-secondary mt-3">Back to User List</a>
+    </div>
+</div>

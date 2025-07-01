@@ -8,7 +8,7 @@ namespace Vlammend_Varken.Pages.Customer
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public List<MenuCategory> Categories { get; set; } = new List<MenuCategory>();
+        public List<MenuCategory> Categories { get; set; } = new();
 
         public IndexModel(IHttpClientFactory httpClientFactory)
         {

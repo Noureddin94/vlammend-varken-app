@@ -7,7 +7,7 @@ namespace Vlammend_Varken
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +49,24 @@ namespace Vlammend_Varken
             });
 
             var app = builder.Build();
+
+            // Ensure the database is created and seeded
+            if (args.Contains("--seed")) // to use this, run the app with "dotnet run -- seed"
+            {
+                Console.WriteLine("Seeding database...");
+                using (var scope = app.Services.CreateScope())
+                {
+                    var services = scope.ServiceProvider;
+                    var context = services.GetRequiredService<AppDbConnection>();
+                    var userManager = services.GetRequiredService<UserManager<User>>();
+                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole<int>>>();
+
+                    // Apply migrations and seed the database
+                    await DbSeeder.SeedAsync(context, userManager, roleManager);
+                }
+                Console.WriteLine("Database seeded successfully.");
+                return; // exit after seeding
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

@@ -23,9 +23,9 @@ namespace Vlammend_Varken.Pages.Admin.Users
             PendingUsers = _userManager.Users.Where(u => !u.IsApproved).ToList();
         }
 
-        public async Task<IActionResult> OnPostApproveAsync(int id)
+        public async Task<IActionResult> OnPostApproveAsync(string userId)
         {
-            var user = await _userManager.FindByIdAsync(id.ToString());
+            var user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
                 user.IsApproved = true;
@@ -35,6 +35,14 @@ namespace Vlammend_Varken.Pages.Admin.Users
                 {
                     await _roleManager.CreateAsync(new IdentityRole<int>("Waiter"));
                 }
+
+                // Remove any existing roles first
+                var currentRoles = await _userManager.GetRolesAsync(user);
+                if (currentRoles.Any())
+                {
+                    await _userManager.RemoveFromRolesAsync(user, currentRoles);
+                }
+
                 await _userManager.AddToRoleAsync(user, "Waiter");
             }
             return RedirectToPage();

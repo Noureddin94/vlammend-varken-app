@@ -9,7 +9,7 @@ namespace Vlammend_Varken.Core.Models
 
         [ForeignKey("MainTable")]
         public int MainTableId { get; set; }
-        public required Table MainTable { get; set; }
+        public Table? MainTable { get; set; }
 
         [ForeignKey("MergedTableReference")]
         public int MergedTableId { get; set; }
