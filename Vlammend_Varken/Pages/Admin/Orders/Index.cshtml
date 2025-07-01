@@ -1,4 +1,244 @@
 ﻿@page
+@using Vlammend_Varken.Core.Models
 @model Vlammend_Varken.Pages.Admin.Orders.IndexModel
 @{
+    ViewData["Title"] = "Orders Management";
+    Layout = "_LayoutAdmin";
+    ViewData["ActivePage"] = "Orders";
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Orders Management</h1>
+        <div>
+            <select class="form-control d-inline-block w-auto mr-2" id="statusFilter">
+                <option value="">All Statuses</option>
+                @foreach (var status in Enum.GetValues(typeof(OrderStatus)))
+                {
+                    <option value="@status">@status</option>
+                }
+            </select>
+            <a asp-page="Create" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Create New Order
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Recent Orders</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="ordersTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Table</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Total Amount</th>
+                            <th>Items</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.Orders)
+                        {
+                            <tr>
+                                <td>@order.Id</td>
+                                <td>@order.Table?.TableNumber</td>
+                                <td>
+                                    <span class="badge @Model.GetStatusBadgeClass(order.Status)">
+                                        @order.Status
+                                    </span>
+                                </td>
+                                <td>@order.OrderDate.ToString("f", new System.Globalization.CultureInfo("nl-NL"))</td>
+                                <td>@order.TotalAmount.ToString("C", new System.Globalization.CultureInfo("nl-NL"))</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info view-items" data-order-id="@order.Id">
+                                        <i class="fas fa-list"></i> View (@order.OrderOverviews.Count)
+                                    </button>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-primary edit-order" data-order-id="@order.Id">
+                                            <i class="fas fa-edit">Edit</i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger delete-order" data-order-id="@order.Id">
+                                            <i class="fas fa-trash">Delete</i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Order Modal -->
+<div class="modal fade" id="createOrderModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create New Order</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" asp-page-handler="Create">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Table</label>
+                        <select class="form-control" asp-for="NewOrder.TableId" required>
+                            <option value="">Select Table</option>
+                            @foreach (var table in Model.AvailableTables)
+                            {
+                                <option value="@table.Id">Table @table.TableNumber</option>
+                            }
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select class="form-control" asp-for="NewOrder.Status">
+                            @foreach (var status in Enum.GetValues(typeof(OrderStatus)))
+                            {
+                                <option value="@status">@status</option>
+                            }
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Menu Items</label>
+                        <div id="menuItemsContainer">
+                            <div class="row mb-2 menu-item-row">
+                                <div class="col-md-5">
+                                    <select class="form-control menu-item-select" name="OrderItems[0].MenuItemId" required>
+                                        <option value="">Select Item</option>
+                                        @foreach (var item in Model.MenuItems)
+                                        {
+                                            <option value="@item.Id" data-price="@item.Price">@item.Name - @item.Price.ToString("C")</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="number" class="form-control quantity" name="OrderItems[0].Quantity" value="1" min="1" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control note" name="OrderItems[0].Note" placeholder="Special instructions">
+                                </div>
+                                <div class="col-md-1">
+                                    <button type="button" class="btn btn-danger remove-item"><i class="fas fa-times"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" id="addMenuItem" class="btn btn-sm btn-secondary mt-2">
+                            <i class="fas fa-plus"></i> Add Item
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Order Items Modal -->
+<div class="modal fade" id="orderItemsModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Order Items</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="orderItemsContent">
+                <!-- Content will be loaded via AJAX -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Filter orders by status
+            $('#statusFilter').change(function() {
+                const status = $(this).val();
+                if (status) {
+                    $('#ordersTable tbody tr').hide();
+                    $(`#ordersTable tbody tr td:nth-child(3):contains('${status}')`).parent().show();
+                } else {
+                    $('#ordersTable tbody tr').show();
+                }
+            });
+
+            // View order items
+            $('.view-items').click(function() {
+                const orderId = $(this).data('order-id');
+                $('#orderItemsContent').load(`?handler=OrderItems&id=${orderId}`);
+                $('#orderItemsModal').modal('show');
+            });
+
+            // Add menu item row
+            let itemCounter = 1;
+            $('#addMenuItem').click(function() {
+                const newRow = $(`
+                    <div class="row mb-2 menu-item-row">
+                        <div class="col-md-5">
+                            <select class="form-control menu-item-select" name="OrderItems[${itemCounter}].MenuItemId" required>
+                                <option value="">Select Item</option>
+                                @foreach (var item in Model.MenuItems)
+                                {
+                                    <option value="@item.Id" data-price="@item.Price">@item.Name - @item.Price.ToString("C")</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" class="form-control quantity" name="OrderItems[${itemCounter}].Quantity" value="1" min="1" required>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control note" name="OrderItems[${itemCounter}].Note" placeholder="Special instructions">
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-danger remove-item"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                `);
+                $('#menuItemsContainer').append(newRow);
+                itemCounter++;
+            });
+
+            // Remove menu item row
+            $(document).on('click', '.remove-item', function() {
+                $(this).closest('.menu-item-row').remove();
+                // Reindex remaining items if needed
+            });
+        });
+    </script>
+}
+
+@functions {
+    public string GetStatusBadgeClass(OrderStatus status)
+    {
+        return status switch
+        {
+            OrderStatus.Received => "badge-secondary",
+            OrderStatus.InProgress => "badge-warning",
+            OrderStatus.Completed => "badge-success",
+            OrderStatus.Cancelled => "badge-danger",
+            _ => "badge-primary"
+        };
+    }
 }

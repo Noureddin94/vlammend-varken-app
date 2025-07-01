@@ -1,49 +1,61 @@
-﻿@page
-@model Vlammend_Varken.Pages.Admin.MenuItems.IndexModel
-@{
-    ViewData["Title"] = "Menu Items";
-    ViewData["ActivePage"] = "MenuItems";
-    Layout = "_LayoutAdmin";
-}
+﻿@page  
+@model Vlammend_Varken.Pages.Admin.MenuItems.IndexModel  
+@{  
+    ViewData["Title"] = "Menu Items";  
+    ViewData["ActivePage"] = "MenuItems";  
+    Layout = "_LayoutAdmin";  
+}  
 
-<div class="d-flex justify-content-between align-items-center m-4 p-4" style="background-color: #ff790c21">
-    <h2>Menu Items</h2>
-    <a asp-page="Create" class="btn btn-primary">
-        <i class="fas fa-plus me-2"></i>Create New
-    </a>
-</div>
+<div class="d-flex justify-content-between align-items-center m-4 p-4" style="background-color: #dfe0e1">
+    <h2>Menu Items</h2>  
+    <a asp-page="Create" class="btn btn-primary">  
+        <i class="fas fa-plus me-2"></i>Create New  
+    </a>  
+</div>  
 
-<div class="table table-responsive table-striped-columns">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Price</th>
+<div class="table table-responsive table-striped-columns table-hover">
+    <table class="table table-striped align-middle">
+        <thead>  
+            <tr>  
+                <th>Name</th>  
+                <th>Description</th>  
+                <th>Image</th>  
+                <th>Price</th>  
                 <th>Category</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.MenuItems)
-            {
-                <tr>
-                    <td>@item.Name</td>
-                    <td>@item.Description</td>
-                    <td>@item.Price.ToString("C")</td>
+                <th>Is Active</th>
+                <th>Actions</th>  
+            </tr>  
+        </thead>  
+        <tbody>  
+            @foreach (var item in Model.MenuItems)  
+            {  
+                <tr>  
+                    <td>@item.Name</td>  
+                    <td>@item.Description</td>  
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.Image))
+                        {
+                            <img src="@item.Image" alt="@item.Name" class="img-thumbnail" style="max-width: 100px; max-height: 100px;" />  
+                        }
+                    </td>
+                    <td>@item.Price.ToString("C", new System.Globalization.CultureInfo("nl-NL"))</td>
                     <td>@item.MenuCategory?.Name</td>
                     <td>
-                        <div class="btn-group" role="group">
-                            <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
-                                <i class="fas fa-trash"></i>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                        <span class="badge @(item.IsActive ? "bg-success" : "bg-secondary")">
+                            @(item.IsActive ? "Active" : "Inactive")
+                        </span>
+                    <td>  
+                        <div class="btn-group" role="group">  
+                            <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">  
+                                <i class="fas fa-edit">Edit</i>  
+                            </a>  
+                            <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">  
+                                <i class="fas fa-trash">Delete</i>  
+                            </a>  
+                        </div>  
+                    </td>  
+                </tr>  
+            }  
+        </tbody>  
+    </table>  
 </div>

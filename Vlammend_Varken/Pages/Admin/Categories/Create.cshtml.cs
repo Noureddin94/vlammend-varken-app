@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Vlammend_Varken.Core.Data;
 using Vlammend_Varken.Core.Models;
+using System.Security.Cryptography;
 
 namespace Vlammend_Varken.Pages.Admin.Categories
 {
@@ -11,15 +12,20 @@ namespace Vlammend_Varken.Pages.Admin.Categories
     {
         private readonly AppDbConnection _context;
         private readonly IWebHostEnvironment _environment;
+        private readonly ILogger<CreateModel> _logger;
 
-        public CreateModel(AppDbConnection context, IWebHostEnvironment environment)
+        public CreateModel(AppDbConnection context,
+                         IWebHostEnvironment environment,
+                         ILogger<CreateModel> logger)
         {
             _context = context;
             _environment = environment;
+            _logger = logger;
         }
 
         [BindProperty]
         public MenuCategory MenuCategory { get; set; } = new();
+
         [BindProperty]
         public IFormFile? ImageFile { get; set; }
 
@@ -35,25 +41,35 @@ namespace Vlammend_Varken.Pages.Admin.Categories
                 return Page();
             }
 
-            if (ImageFile != null)
+            if (ImageFile != null && ImageFile.Length > 0)
             {
-                var fileName = Path.GetFileName(ImageFile.FileName);
-                var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads");
-
-                if (!Directory.Exists(uploadsFolder))
+                try
                 {
-                    Directory.CreateDirectory(uploadsFolder);
+                    // Generate unique filename to prevent conflicts
+                    var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(ImageFile.FileName)}";
+                    var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "categories");
+
+                    if (!Directory.Exists(uploadsFolder))
+                    {
+                        Directory.CreateDirectory(uploadsFolder);
+                    }
+
+                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await ImageFile.CopyToAsync(stream);
+                    }
+
+                    // Save relative path
+                    MenuCategory.Image = $"/uploads/categories/{uniqueFileName}";
                 }
-
-                var filePath = Path.Combine(uploadsFolder, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                catch (Exception ex)
                 {
-                    await ImageFile.CopyToAsync(stream);
+                    _logger.LogError(ex, "Error uploading category image");
+                    ModelState.AddModelError("", "Error uploading image. Please try again.");
+                    return Page();
                 }
-
-                // Save only relative path for use in src="/uploads/..."
-                MenuCategory.Image = "/uploads/" + fileName;
             }
 
             _context.MenuCategories.Add(MenuCategory);

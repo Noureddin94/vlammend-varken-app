@@ -16,6 +16,7 @@ namespace Vlammend_Varken.API
             builder.Services.AddDbContext<Vlammend_Varken.Core.Data.AppDbConnection>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            
             // Register Identity services
             builder.Services.AddIdentity<User, IdentityRole<int>>()
                             .AddEntityFrameworkStores<AppDbConnection>()
@@ -28,7 +29,15 @@ namespace Vlammend_Varken.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddCors(options => {
+                options.AddDefaultPolicy(policy => {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
             
+
 
 
             var app = builder.Build();
@@ -43,7 +52,7 @@ namespace Vlammend_Varken.API
             //app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
+            app.UseCors();
 
             app.MapControllers();
 
