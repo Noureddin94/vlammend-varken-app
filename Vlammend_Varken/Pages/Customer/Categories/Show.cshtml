@@ -1,0 +1,37 @@
+﻿@page
+@model Vlammend_Varken.Pages.Customer.Categories.ShowModel
+@{
+
+    Layout = "_layoutCustomer";
+    // Layout = "_LayoutNavbar";
+    ViewData["Title"] = "Customer";
+
+}
+<h2>Welcome to Vlammend Varken page customer</h2>
+
+
+<div class="container">
+    <h1>Menu Categories</h1>
+
+    @if (Model.Categories.Any())
+    {
+        <div class="row">
+            @foreach (var category in Model.Categories)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">@category.Name</h5>
+                            <img src="@category.Image" alt="@category.Name" class="img-fluid mb-3" />
+                            <!-- Add more category details as needed -->
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">No categories available</div>
+    }
+</div>
