@@ -1,12 +1,13 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Vlammend_Varken.Pages.Customer
 {
-    public class OrderModel : PageModel
+    public class DayMenuModel : PageModel
     {
         public void OnGet()
         {
+            // Hier kun je straks dynamisch het dagmenu ophalen
         }
     }
 }
+
