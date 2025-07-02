@@ -40,6 +40,10 @@ namespace Vlammend_Varken.Core.Data
                 .WithMany()
                 .HasForeignKey(mt => mt.MergedTableId)
                 .OnDelete(DeleteBehavior.Restrict); // or .NoAction
+            modelBuilder.Entity<MenuCategory>()
+                .HasMany(c => c.MenuItems)
+                .WithOne(i => i.MenuCategory)
+                .HasForeignKey(i => i.MenuCategoryId);
 
             // Seed data for tables (1-75)
             var tables = new List<Table>();

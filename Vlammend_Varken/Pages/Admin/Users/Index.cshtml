@@ -12,9 +12,9 @@
             <a asp-page="ApproveUsers" class="btn btn-info me-4">
                 <i class="fas fa-plus"></i> Approval Requests
             </a>
-            <a asp-page="Create" class="btn btn-primary">
+            @* <a asp-page="Create" class="btn btn-primary">
                 <i class="fas fa-user-plus me-2"></i>Create New User
-            </a>
+            </a> *@
         </div>
     </div>
     <div class="card-body">
@@ -34,7 +34,22 @@
                         <tr>
                             <td>@user.Email</td>
                             <td>
-                                <span class="badge bg-secondary">@user.Role</span>
+                                <form method="post" asp-page-handler="UpdateRole" class="d-inline">
+                                    <input type="hidden" name="userId" value="@user.Id" />
+                                    <select name="newRole" class="form-select form-select-sm d-inline w-auto">
+                                        <option value="">No Role</option>
+                                        @foreach (var role in Model.AvailableRoles)
+                                        {
+                                            var isSelected = !string.IsNullOrEmpty(user.Role) && role.Value == user.Role;
+                                            <option value="@role.Value" selected="@isSelected">
+                                                @role.Text
+                                            </option>
+                                        }
+                                    </select>
+                                    <button type="submit" class="btn btn-sm btn-primary ms-1">
+                                        <i class="fas fa-sync-alt"></i> Change
+                                    </button>
+                                </form>
                             </td>
                             <td>
                                 @if (user.IsApproved)
@@ -63,9 +78,9 @@
                                             </button>
                                         }
                                     </form>
-                                    <a asp-page="./Edit" asp-route-id="@user.Id" class="btn btn-sm btn-primary ms-1">
+                                    @* <a asp-page="./Edit" asp-route-id="@user.Id" class="btn btn-sm btn-primary ms-1">
                                         <i class="fas fa-edit">Edit</i>
-                                    </a>
+                                    </a> *@
                                     <form method="post" asp-page-handler="Delete" class="d-inline ms-1">
                                         <input type="hidden" name="userId" value="@user.Id" />
                                         <button type="submit" class="btn btn-sm btn-danger"

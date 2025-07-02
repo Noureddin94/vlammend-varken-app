@@ -52,12 +52,17 @@ namespace Vlammend_Varken.Core.Data
                 var waiter2 = new User { UserName = "waiter2", Email = "waiter2@mail.com", Role = EnumRole.Waiter, IsApproved = false };
                 await userManager.CreateAsync(waiter2, "Waiter@123");
                 await userManager.AddToRoleAsync(waiter2, "Waiter");
+
+                var chef1 = new User { UserName = "chef1", Email = "chef1@mail.com", Role = EnumRole.Chef, IsApproved = true };
+                await userManager.CreateAsync(chef1, "Chef@123");
+                await userManager.AddToRoleAsync(chef1, "Chef");
             }
 
             // Seed categories
             if (!context.MenuCategories.Any())
             {
-                var cat1 = new MenuCategory { Name = "Dagfavorieten", Description = "Special daily favorites" };
+                //TODO: Add Images for categories
+                var cat1 = new MenuCategory { Name = "Dagfavorieten", Description = "Special daily favorites", Image="" };
                 var cat2 = new MenuCategory { Name = "Vaste Gerechten", Description = "Fixed dishes" };
                 var cat3 = new MenuCategory { Name = "Dranken", Description = "Drinks" };
                 context.MenuCategories.AddRange(cat1, cat2, cat3);

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Vlammend_Varken.Core.Data;
 
@@ -11,9 +12,11 @@ using Vlammend_Varken.Core.Data;
 namespace Vlammend_Varken.Core.Migrations
 {
     [DbContext(typeof(AppDbConnection))]
-    partial class AppDbConnectionModelSnapshot : ModelSnapshot
+    [Migration("20250702083002_AddRelationships")]
+    partial class AddRelationships
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

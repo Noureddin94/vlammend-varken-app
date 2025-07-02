@@ -8,8 +8,8 @@ namespace Vlammend_Varken.Core.Models
         public decimal Price { get; set; }
 
         public string Quantity { get; set; } = string.Empty; // e.g., "100g", "1 piece", etc.
-        public int MenuItemId { get; set; }
         public MenuItem? MenuItem { get; set; } = null;
         public bool IsActive { get; set; } = true;
+        public int MenuItemId { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿@page
 @using Vlammend_Varken.Core.Models
 @model Vlammend_Varken.Pages.Admin.Orders.IndexModel
+@Html.AntiForgeryToken()
 @{
     ViewData["Title"] = "Orders Management";
     Layout = "_LayoutAdmin";
@@ -13,9 +14,9 @@
         <div>
             <select class="form-control d-inline-block w-auto mr-2" id="statusFilter">
                 <option value="">All Statuses</option>
-                @foreach (var status in Enum.GetValues(typeof(OrderStatus)))
+                @foreach (OrderStatus status in Enum.GetValues(typeof(OrderStatus)))
                 {
-                    <option value="@status">@status</option>
+                    <option value="@status">@Model.GetStatusDisplayText(status)</option>
                 }
             </select>
             <a asp-page="Create" class="btn btn-primary">
@@ -48,10 +49,31 @@
                             <tr>
                                 <td>@order.Id</td>
                                 <td>@order.Table?.TableNumber</td>
-                                <td>
-                                    <span class="badge @Model.GetStatusBadgeClass(order.Status)">
-                                        @order.Status
-                                    </span>
+                                <td style="position: relative;">
+                                    <div class="dropdown">
+                                        <button class="btn btn-status dropdown-toggle @Model.GetStatusBadgeClass(order.Status)"
+                                                type="button"
+                                                id="statusDropdown-@order.Id"
+                                                data-bs-toggle="dropdown"
+                                                aria-expanded="false">
+                                            <span class="status-badge @Model.GetStatusBadgeClass(order.Status)"></span>
+                                            @Model.GetStatusDisplayText(order.Status)
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow"
+                                            style="z-index: 1060; min-width: 180px;">
+                                            @foreach (OrderStatus status in Enum.GetValues(typeof(OrderStatus)))
+                                            {
+                                                <li>
+                                                    <a class="dropdown-item status-change py-2" href="#"
+                                                       data-order-id="@order.Id"
+                                                       data-new-status="@status">
+                                                        <span class="status-badge @Model.GetStatusBadgeClass(status) me-2"></span>
+                                                        @Model.GetStatusDisplayText(status)
+                                                    </a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
                                 </td>
                                 <td>@order.OrderDate.ToString("f", new System.Globalization.CultureInfo("nl-NL"))</td>
                                 <td>@order.TotalAmount.ToString("C", new System.Globalization.CultureInfo("nl-NL"))</td>
@@ -151,20 +173,18 @@
 </div>
 
 <!-- Order Items Modal -->
-<div class="modal fade" id="orderItemsModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="orderItemsModal" tabindex="-1" aria-labelledby="orderItemsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Order Items</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <h5 class="modal-title" id="orderItemsModalLabel">Order Items</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="orderItemsContent">
                 <!-- Content will be loaded via AJAX -->
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -172,23 +192,88 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function() {
+            $(document).ready(function() {
+            // Initialize dropdowns
+            var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+            var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+                return new bootstrap.Dropdown(dropdownToggleEl, {
+                    boundary: 'clippingParents',
+                    popperConfig: { strategy: 'fixed' }
+                });
+            });
+
             // Filter orders by status
             $('#statusFilter').change(function() {
                 const status = $(this).val();
+                const statusText = $(this).find('option:selected').text();
+
                 if (status) {
                     $('#ordersTable tbody tr').hide();
-                    $(`#ordersTable tbody tr td:nth-child(3):contains('${status}')`).parent().show();
+                    $(`#ordersTable tbody tr`).each(function() {
+                        const rowStatus = $(this).find('.btn-status').text().trim();
+                        if (rowStatus === statusText) {
+                            $(this).show();
+                        }
+                    });
                 } else {
                     $('#ordersTable tbody tr').show();
                 }
             });
 
-            // View order items
-            $('.view-items').click(function() {
+            // Handle status change
+            $(document).on('click', '.status-change', function(e) {
+                e.preventDefault();
+
                 const orderId = $(this).data('order-id');
-                $('#orderItemsContent').load(`?handler=OrderItems&id=${orderId}`);
-                $('#orderItemsModal').modal('show');
+                const newStatus = $(this).data('new-status');
+                const $button = $(`#statusDropdown-${orderId}`);
+                const token = $('input[name="__RequestVerificationToken"]').val();
+                const newStatusText = $(this).text().trim();
+                const newBadgeClass = $(this).find('span').attr('class');
+
+                // Update UI immediately
+             $button
+            .removeClass()
+            .addClass(`btn btn-status dropdown-toggle ${newBadgeClass}`);
+
+            // Update inner dot and text
+            $button.find('.status-badge').attr('class', `status-badge ${newBadgeClass}`);
+            $button.contents().filter(function() {
+                return this.nodeType === 3; // text node
+            }).remove();
+            $button.append(` ${newStatusText}`);
+
+            // Hide dropdown
+            bootstrap.Dropdown.getInstance($button[0]).hide();
+
+                // Send request
+                $.ajax({
+                    url: `?handler=UpdateStatus`,
+                    type: 'POST',
+                    data: {
+                        id: orderId,
+                        status: newStatus,
+                        __RequestVerificationToken: token
+                    }
+                }).fail(function() {
+                    location.reload(); // Revert on error
+                });
+            });
+
+            // Handle view items modal
+            $(document).on('click', '.view-items', function() {
+                const orderId = $(this).data('order-id');
+                const modal = new bootstrap.Modal(document.getElementById('orderItemsModal'));
+
+                $('#orderItemsContent').html('<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+
+                $.get(`?handler=OrderItems&id=${orderId}`, function(data) {
+                    $('#orderItemsContent').html(data);
+                }).fail(function() {
+                    $('#orderItemsContent').html('<div class="alert alert-danger">Failed to load order items</div>');
+                });
+
+                modal.show();
             });
 
             // Add menu item row
@@ -201,7 +286,7 @@
                                 <option value="">Select Item</option>
                                 @foreach (var item in Model.MenuItems)
                                 {
-                                    <option value="@item.Id" data-price="@item.Price">@item.Name - @item.Price.ToString("C")</option>
+                                        <option value="@item.Id" data-price="@item.Price">@item.Name - @item.Price.ToString("C")</option>
                                 }
                             </select>
                         </div>
@@ -223,9 +308,9 @@
             // Remove menu item row
             $(document).on('click', '.remove-item', function() {
                 $(this).closest('.menu-item-row').remove();
-                // Reindex remaining items if needed
             });
         });
+
     </script>
 }
 

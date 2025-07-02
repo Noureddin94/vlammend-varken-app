@@ -21,6 +21,11 @@ namespace Vlammend_Varken.API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<MenuCategory>>> GetMenuCategories()
         {
+            var categories = await _context.MenuCategories
+            .Include(c => c.MenuItems) // Include menu items
+            .ThenInclude(i => i.Ingredients) 
+            .Where(c => c.IsActive)    // Only active categories
+            .ToListAsync();
             return Ok(new
             {
                 message = "All categories retrieved successfully",
@@ -31,7 +36,10 @@ namespace Vlammend_Varken.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<MenuCategory>> GetMenuCategory(int id)
         {
-            var category = await _context.MenuCategories.FindAsync(id);
+            var category = await _context.MenuCategories
+            .Include(c => c.MenuItems)
+            .ThenInclude(i => i.Ingredients)
+            .FirstOrDefaultAsync(c => c.Id == id);
             if (category == null)
             {
                 return NotFound(new { message = "Category not found" });

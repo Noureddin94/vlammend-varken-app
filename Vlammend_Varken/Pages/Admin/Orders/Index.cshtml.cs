@@ -35,11 +35,22 @@ namespace Vlammend_Varken.Pages.Admin.Orders
         {
             return status switch
             {
-                OrderStatus.Received => "bg-secondary text-white",
-                OrderStatus.InProgress => "bg-warning text-dark",
-                OrderStatus.Completed => "bg-success text-white",
-                OrderStatus.Cancelled => "bg-danger text-white",
-                _ => "text-bg-light"
+                OrderStatus.Received => "btn-primary text-white",
+                OrderStatus.InProgress => "btn-warning text-dark",
+                OrderStatus.Completed => "btn-success text-white",
+                OrderStatus.Cancelled => "btn-danger text-white",
+                _ => "btn-secondary text-white"
+            };
+        }
+        public string GetStatusDisplayText(OrderStatus status)
+        {
+            return status switch
+            {
+                OrderStatus.Received => "New Order",
+                OrderStatus.InProgress => "Preparing",
+                OrderStatus.Completed => "Ready",
+                OrderStatus.Cancelled => "Cancelled",
+                _ => status.ToString()
             };
         }
 
@@ -103,7 +114,7 @@ namespace Vlammend_Varken.Pages.Admin.Orders
             order.Status = status;
             await _context.SaveChangesAsync();
 
-            return RedirectToPage();
+            return new JsonResult(new { success = true });
         }
 
         public async Task<IActionResult> OnPostDeleteAsync(int id)

@@ -22,7 +22,7 @@ namespace Vlammend_Varken.Pages.Admin.Users
         {
             public string? Id { get; set; }
             public string? Email { get; set; }
-            public string? Role { get; set; }
+            public string Role { get; set; } = "No Role";
             public bool IsApproved { get; set; }
         }
 
@@ -54,6 +54,19 @@ namespace Vlammend_Varken.Pages.Admin.Users
             {
                 var roles = await _userManager.GetRolesAsync(user);
 
+                // If user is ID = 1 and not already admin, make admin
+                if (user.Id == 1 && !roles.Contains("Admin"))
+                {
+                    if (roles.Any())
+                    {
+                        await _userManager.RemoveFromRolesAsync(user, roles);
+                    }
+                    await _userManager.AddToRoleAsync(user, "Admin");
+                    user.Role = EnumRole.Admin;
+                    user.IsApproved = true;
+                    await _userManager.UpdateAsync(user);
+                }
+
                 Users.Add(new UserViewModel
                 {
                     Id = user.Id.ToString(),
@@ -67,25 +80,41 @@ namespace Vlammend_Varken.Pages.Admin.Users
         public async Task<IActionResult> OnPostToggleApprovalAsync(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
-            if (user != null)
+            if (user == null)
             {
-                user.IsApproved = !user.IsApproved;
-                if (user.IsApproved)
-                {
-                    user.IsApproved = true;
-                }
-                else
-                {
-                    user.IsApproved = false;
-                    // Optionally, remove the user from roles if not approved
-                    var roles = await _userManager.GetRolesAsync(user);
-                    if (roles.Any())
-                    {
-                        await _userManager.RemoveFromRolesAsync(user, roles);
-                    }
-                }
-                await _userManager.UpdateAsync(user);
+                return NotFound();
             }
+
+            user.IsApproved = !user.IsApproved;
+
+            if (user.IsApproved)
+            {
+                // When approving, assign Waiter role
+                if (!await _roleManager.RoleExistsAsync("Waiter"))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole<int>("Waiter"));
+                }
+
+                // Remove any existing roles first
+                var currentRoles = await _userManager.GetRolesAsync(user);
+                if (currentRoles.Any())
+                {
+                    await _userManager.RemoveFromRolesAsync(user, currentRoles);
+                }
+
+                await _userManager.AddToRoleAsync(user, "Waiter");
+            }
+            else
+            {
+                // When revoking, remove ALL roles
+                var currentRoles = await _userManager.GetRolesAsync(user);
+                if (currentRoles.Any())
+                {
+                    await _userManager.RemoveFromRolesAsync(user, currentRoles);
+                }
+            }
+
+            await _userManager.UpdateAsync(user);
             return RedirectToPage();
         }
 

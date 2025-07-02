@@ -5,4 +5,30 @@
     Layout = "_LayoutCustomer";
 }
 
-<h1 class="mb-4">Menu Items</h1>
+@* <h1 class="mb-4">Menu Items</h1> *@
+
+<div class="container mt-4">
+    <h1 class="mb-4">Our Menu</h1>
+
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        @foreach (var item in Model.MenuItems)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        @if (!string.IsNullOrEmpty(item.Image))
+                        {
+                            <img src="@item.Image" alt="@item.Name" class="card-img-top mb-3" style="object-fit: cover; max-height: 200px;" />
+                        }
+                        @if (!string.IsNullOrEmpty(item.Description))
+                        {
+                            <p class="card-text">@item.Description</p>
+                        }
+                        <p class="text-muted">€@item.Price.ToString("0.00")</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -6,31 +6,194 @@
     ViewData["Title"] = "Customer";
 }
 
-<h2>Welcome to Vlammend Varken page customer</h2>
 
-
-<div class="container">
-    <h1>Menu Categories</h1>
+<div class="container mt-4">
+    <h1 class="mb-1 text-dark fw-bold">Categorieën</h1>
+    <p class="text-dark mb-4">
+        Bij Het Vlammend Varken draait alles om goed eten, eerlijk vlees en volle smaak.
+        Kies je favoriet uit onze selectie dagverse specialiteiten en tijdloze klassiekers. Smakelijk!
+    </p>
 
     @if (Model.Categories.Any())
     {
-        <div class="row">
-            @foreach (var category in Model.Categories)
+        @foreach (var category in Model.Categories)
+        {
+            if (category.MenuItems != null && category.MenuItems.Any())
             {
-                <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">@category.Name</h5>
-                            <img src="@category.Image" alt="@category.Name" class="img-fluid mb-3" />
-                            <!-- Add more category details as needed -->
-                        </div>
-                    </div>
+            <div class="category-section mb-5 p-4 rounded shadow-sm" style="background-color: #f8f9fa;">
+
+                <div class="p-3 mb-3 rounded" style="background-color: #ffc10720;">
+                    <h2 class="text-warning mb-0">@category.Name</h2>
                 </div>
-            }
-        </div>
+                @* @if (!string.IsNullOrEmpty(category.Image))
+                {
+                    
+                    <div class="mb-3 text-start">
+                        <img src="@category.Image" alt="@category.Name" class="img-fluid rounded shadow-sm" style="max-height: 300px; object-fit: cover;" />
+                    </div>
+                } *@
+
+
+                @if (!string.IsNullOrEmpty(category.Description))
+                {
+                    <p class="text-muted mb-4">@category.Description</p>
+                }
+
+                @if (category.MenuItems != null && category.MenuItems.Any())
+                {
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                        @foreach (var item in category.MenuItems)
+                        {
+                            <div class="col">
+                                <div class="card h-100 shadow-sm">
+                                    @if (!string.IsNullOrEmpty(item.Image))
+                                    {
+                                        <img src="@item.Image" alt="@item.Name" class="card-img-top" style="object-fit: cover; max-height: 200px;" />
+                                    }
+                                    <div class="card-body">
+                                        <h5 class="card-title">@item.Name</h5>
+                                        @if (!string.IsNullOrEmpty(item.Description))
+                                        {
+                                            <p class="card-text">@item.Description</p>
+                                        }
+                                        <p class="text-success fw-bold">€@item.Price.ToString("0.00")</p>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-success btn-sm" onclick="addToOrder('@item.Name', @item.Price)">
+                                                <i class="fas fa-plus"></i> Toevoegen
+                                            </button>
+                                            <button class="btn btn-outline-secondary btn-sm"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#ingredientsModal-@item.Id">
+                                                <i class="fas fa-info-circle"></i> Ingrediënten
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Ingredients Modal -->
+                            <div class="modal fade" id="ingredientsModal-@item.Id" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Ingrediënten: @item.Name</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            @if (item.Ingredients != null && item.Ingredients.Any())
+                                            {
+                                                <ul class="list-group">
+                                                    @foreach (var ingredient in item.Ingredients)
+                                                    {
+                                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                            @ingredient.Name
+                                                            <span class="badge bg-primary rounded-pill">@ingredient.Quantity</span>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            }
+                                            else
+                                            {
+                                                <p>Geen ingrediënten informatie beschikbaar</p>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info mt-3">
+                        Momenteel geen gerechten beschikbaar in deze categorie.
+                    </div>
+                }
+            </div>
+          }
+        }
     }
     else
     {
-        <div class="alert alert-info">No categories available</div>
+        <div class="alert alert-warning">
+            Geen menu categorieën gevonden.
+        </div>
     }
 </div>
+
+<!-- Shopping Cart Section -->
+<div id="orderSidebar" class="order-sidebar p-3 bg-light shadow"
+     style="display: none; position: fixed; top: 0; right: 0; width: 300px; height: 100%; overflow-y: auto; z-index: 1050;">
+    <h4 class="mb-3">Jouw bestelling</h4>
+    <ul id="orderItems" class="list-group mb-3">
+        <!-- JS will add items here -->
+    </ul>
+    <div class="d-flex justify-content-between fw-bold">
+        <span>Totaal:</span>
+        <span id="orderTotal">€0.00</span>
+    </div>
+    <button class="btn btn-success mt-3 w-100" onclick="submitOrder()">Bestelling plaatsen</button>
+</div>
+
+
+
+@section Scripts {
+    <script>
+        let orderItems = [];
+        let orderTotal = 0;
+
+        function addToOrder(name, price) {
+            let existingItem = orderItems.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.qty += 1;
+                existingItem.total = existingItem.qty * existingItem.price;
+            } else {
+                orderItems.push({ name: name, price: price, qty: 1, total: price });
+            }
+
+            updateSidebar();
+        }
+
+                function updateSidebar() {
+            let orderList = document.getElementById("orderItems");
+            let totalElem = document.getElementById("orderTotal");
+            let sidebar = document.getElementById("orderSidebar");
+
+            orderList.innerHTML = "";
+            orderTotal = 0;
+
+            if (orderItems.length === 0) {
+                sidebar.style.display = "none";
+                return;
+            }
+
+            sidebar.style.display = "block";
+
+            orderItems.forEach(item => {
+                let li = document.createElement("li");
+                li.className = "list-group-item d-flex justify-content-between align-items-center";
+                li.innerHTML = `<div>
+                                    <div>${item.name}</div>
+                                    <small>${item.qty} x €${item.price.toFixed(2)}</small>
+                                </div>
+                                <span>€${item.total.toFixed(2)}</span>`;
+                orderList.appendChild(li);
+
+                orderTotal += item.total;
+            });
+
+            totalElem.innerText = `€${orderTotal.toFixed(2)}`;
+        }
+
+        function submitOrder() {
+            if (orderItems.length === 0) {
+                alert("Je hebt nog niets toegevoegd.");
+                return;
+            }
+
+            console.log("Order submitting...", orderItems);
+            alert("Bestelling geplaatst! (nog niet gekoppeld aan backend)");
+        }
+    </script>
+
+}

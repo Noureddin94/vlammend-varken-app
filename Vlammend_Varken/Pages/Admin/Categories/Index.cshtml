@@ -19,6 +19,7 @@
             <tr>
                 <th>Name</th>
                 <th>Image</th>
+                <th>Description</th>
                 <th>Status</th>
                 <th>Actions</th>
             </tr>
@@ -34,6 +35,15 @@
                             <img src="@item.Image" alt="@item.Name" style="height:100px; width:100px;" />
                         }
                     </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.Description))
+                        {
+                            @item.Description
+                        }
+                        else
+                        {
+                            <span class="text-muted fst-italic">No description provided</span>
+                        }
                     <td>
                         <span class="badge @(item.IsActive ? "bg-success" : "bg-secondary")">
                             @(item.IsActive ? "Active" : "Inactive")
