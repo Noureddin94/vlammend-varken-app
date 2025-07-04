@@ -154,7 +154,20 @@
             updateSidebar();
         }
 
-                function updateSidebar() {
+        function removeFromOrder(name) {
+            let existingItem = orderItems.find(item => item.name === name);
+            if (existingItem) {
+                if (existingItem.qty > 1) {
+                    existingItem.qty -= 1;
+                    existingItem.total = existingItem.qty * existingItem.price;
+                } else {
+                    orderItems = orderItems.filter(item => item.name !== name);
+                }
+            }
+            updateSidebar();
+        }
+
+        function updateSidebar() {
             let orderList = document.getElementById("orderItems");
             let totalElem = document.getElementById("orderTotal");
             let sidebar = document.getElementById("orderSidebar");
@@ -165,7 +178,7 @@
             if (orderItems.length === 0) {
                 sidebar.style.display = "none";
                 return;
-            }
+        }
 
             sidebar.style.display = "block";
 
@@ -176,7 +189,12 @@
                                     <div>${item.name}</div>
                                     <small>${item.qty} x €${item.price.toFixed(2)}</small>
                                 </div>
-                                <span>€${item.total.toFixed(2)}</span>`;
+                                <div class="d-flex align-items-center">
+                                    <span class="me-2">€${item.total.toFixed(2)}</span>
+                                    <button class="btn btn-sm btn-danger" onclick="removeFromOrder('${item.name}')">
+                                        <i class="bi bi-trash">-</i>
+                                    </button>
+                                </div>`;
                 orderList.appendChild(li);
 
                 orderTotal += item.total;

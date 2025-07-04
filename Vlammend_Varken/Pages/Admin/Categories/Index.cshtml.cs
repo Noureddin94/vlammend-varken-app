@@ -22,7 +22,7 @@ namespace Vlammend_Varken.Pages.Admin.Categories
         public async Task OnGetAsync()
         {
             MenuCategories = await _context.MenuCategories
-                .OrderBy(c => c.Name)
+                .OrderBy(c => c.Id)
                 .ToListAsync();
         }
     }

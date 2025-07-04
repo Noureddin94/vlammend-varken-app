@@ -11,10 +11,15 @@ namespace Vlammend_Varken.Pages.Admin.Categories
     public class DeleteModel : PageModel
     {
         private readonly AppDbConnection _context;
+        private readonly IWebHostEnvironment _environment;
+        private readonly ILogger<EditModel> _logger;
 
-        public DeleteModel(AppDbConnection context)
+        public DeleteModel(AppDbConnection context, IWebHostEnvironment environment,
+                        ILogger<EditModel> logger)
         {
             _context = context;
+            _environment = environment;
+            _logger = logger;
         }
 
         [BindProperty]
@@ -46,11 +51,10 @@ namespace Vlammend_Varken.Pages.Admin.Categories
                 return NotFound();
             }
 
-            var menuCategory = await _context.MenuCategories.FindAsync(MenuCategory);
+            var menuCategory = await _context.MenuCategories.FindAsync(id);
             if (menuCategory != null)
             {
-                MenuCategory = menuCategory;
-                _context.MenuCategories.Remove(MenuCategory);
+                _context.MenuCategories.Remove(menuCategory);
                 await _context.SaveChangesAsync();
             }
 
