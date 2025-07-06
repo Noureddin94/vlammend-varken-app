@@ -66,10 +66,56 @@ Werk aan functies in een aparte branch, en maak een pull request naar `main` als
 git clone https://github.com/jouw-gebruikernaam/jouw-projectnaam.git
 cd jouw-projectnaam
 
+# Start het project (eerste terminal)
+dotnet watch --project .\Vlammend_Varken
+
+# Start API project (tweede terminal)
+cd .\Vlammend_Varken.API\
+dotnet run
+
+# Haal de laatste wijzigingen op
+git pull origin main
+
+# Bekijk alle beschikbare branches
+git branch -a
+
 # Checkout naar een branch
-git checkout feature/reserveringsysteem
+git checkout kok    # of een andere branch
+
+# Als je de branch nog niet lokaal hebt, maak hem dan aan vanaf de remote
+git checkout -b kok origin/kok
+# Nu heb je een lokale branch 'kok' die verbonden is met de remote 'origin/kok'
 
 # Na wijzigingen
 git add .
-git commit -m "Implementatie reserveringsysteem"
+git commit -m "Je commit message hier"
+git push
+
+# Merge wijzigingen naar main
+git checkout main
+git pull origin main      # eerst zeker zijn dat main up-to-date is
+git merge kok
+git push origin main
+```
+## 🛠 Als er conflicts zijn tijdens een merge of pull
+```bash
+# Sla je lokale werk even tijdelijk op (stash)
+git stash
+
+# Haal opnieuw de laatste wijzigingen op
+git pull origin main
+
+# Haal je lokale wijzigingen terug
+git stash pop
+
+### Korte samenvatting conflict oplossing:
+bash
+Copy
+Edit
+git stash            # bewaar je lokale werk tijdelijk
+git pull origin main # update je branch
+git stash pop        # breng je werk terug
+# los eventuele conflicts op
+git add .
+git commit -m "Conflict opgelost"
 git push
